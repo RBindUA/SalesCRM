@@ -14,7 +14,8 @@ namespace Sales.Infrastructure.Data
             : base(options)
         {
         }
-
+        public DbSet<PersonEntity> Persons { get; set; }
+        public DbSet<EmailEntity> Emails { get; set; }
         public DbSet<Customer> Customers {get; set;}
         public DbSet<SalesOrder> SalesOrders {get; set;}
 
@@ -24,6 +25,9 @@ namespace Sales.Infrastructure.Data
             {
                 entity.ToTable("Customer", "Sales");
                 entity.HasKey(e => e.CustomerId);
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+                entity.Property(e => e.PersonId).HasColumnName("PersonID");
 
                 entity.Ignore(c => c.FirstName);
                 entity.Ignore(c => c.LastName);
@@ -37,6 +41,20 @@ namespace Sales.Infrastructure.Data
                 entity.Property(e => e.SalesOrderId).HasColumnName("SalesOrderId");
             });
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<PersonEntity>(entity =>
+            {
+                entity.ToTable("Person", "Person");
+                entity.HasKey(e => e.BusinessEntityId);
+                entity.Property(e => e.BusinessEntityId).HasColumnName("BusinessEntityID");
+            });
+
+            modelBuilder.Entity<EmailEntity>(entity =>
+            {
+                entity.ToTable("EmailAddress", "Person");
+                entity.HasKey(e => e.BusinessEntityId);
+                entity.Property(e => e.BusinessEntityId).HasColumnName("BusinessEntityID");
+            });
         }
     }
 }

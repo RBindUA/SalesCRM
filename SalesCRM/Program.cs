@@ -1,17 +1,44 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Sales.Application.Interfaces;
+using Sales.Infrastructure.Data;
+using Sales.Infrastructure.Repositories;
+
 namespace SalesCRM
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+
+            var services = new ServiceCollection();
+
+            ConfigureServices(services);
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                var mainForm = serviceProvider.GetRequiredService<Form1>();
+                Application.Run(mainForm);
+            }
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            var connectionString = "Server=localhost;Database=AdventureWorks2025;Trusted_Connection=True;TrustServerCertificate=True;";
+
+            services.AddDbContext<AdventureWorksContext>(options =>
+                options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null
+                    );
+                }));
+
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<Form1>();
         }
     }
 }
