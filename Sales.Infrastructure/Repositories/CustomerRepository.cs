@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Sales.Application.Interfaces;
 using Sales.Domain.Entities;
 using Sales.Infrastructure.Data;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Sales.Infrastructure.Repositories
 {
@@ -24,10 +26,10 @@ namespace Sales.Infrastructure.Repositories
             var query = from c in _context.Customers.Include(c => c.Orders)
                         where c.PersonId != null
 
-                        join p in _context.Set<PersonEntity>()
+                        join p in _context.Set<Person>()
                         on c.PersonId equals p.BusinessEntityId
 
-                        join e in _context.Set<EmailEntity>()
+                        join e in _context.Set<Email>()
                         on p.BusinessEntityId equals e.BusinessEntityId into emailJoin
                         from email in emailJoin.DefaultIfEmpty()
 

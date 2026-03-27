@@ -14,10 +14,12 @@ namespace Sales.Infrastructure.Data
             : base(options)
         {
         }
-        public DbSet<PersonEntity> Persons { get; set; }
-        public DbSet<EmailEntity> Emails { get; set; }
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<Email> Emails { get; set; }
         public DbSet<Customer> Customers {get; set;}
         public DbSet<SalesOrder> SalesOrders {get; set;}
+        public DbSet<CustomerOrderDetail>OrderDetails { get; set; }
+        public DbSet<Product> Product { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,22 +40,40 @@ namespace Sales.Infrastructure.Data
             {
                 entity.ToTable("SalesOrderHeader", "Sales");
                 entity.HasKey(e => e.SalesOrderId);
-                entity.Property(e => e.SalesOrderId).HasColumnName("SalesOrderId");
+                entity.Property(e => e.SalesOrderId).HasColumnName("SalesOrderID");
             });
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<PersonEntity>(entity =>
+            modelBuilder.Entity<Person>(entity =>
             {
                 entity.ToTable("Person", "Person");
                 entity.HasKey(e => e.BusinessEntityId);
                 entity.Property(e => e.BusinessEntityId).HasColumnName("BusinessEntityID");
             });
 
-            modelBuilder.Entity<EmailEntity>(entity =>
+            modelBuilder.Entity<Email>(entity =>
             {
                 entity.ToTable("EmailAddress", "Person");
                 entity.HasKey(e => e.BusinessEntityId);
                 entity.Property(e => e.BusinessEntityId).HasColumnName("BusinessEntityID");
+            });
+            modelBuilder.Entity<CustomerOrderDetail>(entity =>
+            {
+                entity.ToTable("SalesOrderDetail","Sales");
+                entity.HasKey(e => e.SalesOrderId);
+                entity.Property(e => e.SalesOrderId).HasColumnName("SalesOrderID");
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+                entity.Property(e => e.Quantity).HasColumnName("OrderQty");
+                entity.Property(e => e.Price).HasColumnName("LineTotal");
+                entity.Property(e => e.OrderDate).HasColumnName("ModifiedDate");
+                entity.Ignore(c => c.ProductName);
+            });
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.ToTable("Product", "Production");
+                entity.HasKey(e => e.ProductId);
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+                entity.Property(e => e.Name).HasColumnName("Name");
             });
         }
     }
