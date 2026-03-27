@@ -13,19 +13,18 @@ namespace SalesCRM
         {
             InitializeComponent();
             _customerRepository = customerRepository;
-
-            this.Load += Form1_Load;
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private async void OrdersButton_Click(object sender, EventArgs e)
         {
+            dgvCustomers.Visible = true;
             await LoadCustomerAsync();
 
         }
         private async Task LoadCustomerAsync()
         {
             try
-            { 
+            {
                 var customers = await _customerRepository.GetAllCustomersAsync();
                 var customerList = customers.ToList();
 

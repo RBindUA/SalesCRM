@@ -29,26 +29,39 @@
         private void InitializeComponent()
         {
             dgvCustomers = new DataGridView();
+            OrdersButton = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).BeginInit();
             SuspendLayout();
             // 
             // dgvCustomers
             // 
             dgvCustomers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCustomers.Location = new Point(12, 12);
+            dgvCustomers.Location = new Point(209, 12);
             dgvCustomers.Name = "dgvCustomers";
-            dgvCustomers.Size = new Size(625, 462);
+            dgvCustomers.Size = new Size(650, 462);
             dgvCustomers.TabIndex = 0;
+            dgvCustomers.Visible = false;
+            // 
+            // OrdersButton
+            // 
+            OrdersButton.Location = new Point(12, 12);
+            OrdersButton.Name = "OrdersButton";
+            OrdersButton.Size = new Size(112, 41);
+            OrdersButton.TabIndex = 1;
+            OrdersButton.Text = "List orders";
+            OrdersButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            OrdersButton.UseVisualStyleBackColor = true;
+            OrdersButton.Click += OrdersButton_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(830, 486);
+            ClientSize = new Size(871, 490);
+            Controls.Add(OrdersButton);
             Controls.Add(dgvCustomers);
             Name = "Form1";
             Text = "Form1";
-            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).EndInit();
             ResumeLayout(false);
         }
@@ -56,5 +69,6 @@
         #endregion
 
         private DataGridView dgvCustomers;
+        private Button OrdersButton;
     }
 }
