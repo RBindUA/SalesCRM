@@ -1,4 +1,5 @@
-﻿using Sales.Domain.Entities;
+﻿using Sales.Application.DTOs;
+using Sales.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace Sales.Application.Interfaces
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
 
         Task AddAsync(Customer customer);
+
+        Task<IEnumerable<CustomerOrderDetail>> GetCustomerOrderDetailsAsync(int customerId);
     }
 }

@@ -17,8 +17,8 @@ namespace Sales.Infrastructure.Data
         public DbSet<Person> Persons { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<Customer> Customers {get; set;}
-        public DbSet<SalesOrder> SalesOrders {get; set;}
-        public DbSet<CustomerOrderDetail>OrderDetails { get; set; }
+        public DbSet<SalesOrder> SalesOrders { get; set; }
+        public DbSet<SalesOrderDetail> SalesOrderDetails { get; set; }
         public DbSet<Product> Product { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,16 +57,19 @@ namespace Sales.Infrastructure.Data
                 entity.HasKey(e => e.BusinessEntityId);
                 entity.Property(e => e.BusinessEntityId).HasColumnName("BusinessEntityID");
             });
-            modelBuilder.Entity<CustomerOrderDetail>(entity =>
+            modelBuilder.Entity<SalesOrderDetail>(entity =>
             {
-                entity.ToTable("SalesOrderDetail","Sales");
-                entity.HasKey(e => e.SalesOrderId);
+                entity.ToTable("SalesOrderDetail", "Sales");
+                //looks like we need combined key of SalesId & OrderId
+                entity.HasKey(e => new { e.SalesOrderId, e.SalesOrderDetailId });
+
                 entity.Property(e => e.SalesOrderId).HasColumnName("SalesOrderID");
+                entity.Property(e => e.SalesOrderDetailId).HasColumnName("SalesOrderDetailID");
                 entity.Property(e => e.ProductId).HasColumnName("ProductID");
-                entity.Property(e => e.Quantity).HasColumnName("OrderQty");
-                entity.Property(e => e.Price).HasColumnName("LineTotal");
-                entity.Property(e => e.OrderDate).HasColumnName("ModifiedDate");
-                entity.Ignore(c => c.ProductName);
+                entity.Property(e => e.OrderQty).HasColumnName("OrderQty");
+                entity.Property(e => e.LineTotal)
+                      .HasColumnName("LineTotal")
+                      .HasColumnType("money");
             });
             modelBuilder.Entity<Product>(entity =>
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Sales.Application.DTOs;
 using Sales.Application.Interfaces;
 using Sales.Domain.Entities;
 using Sales.Infrastructure.Data;
@@ -62,5 +63,27 @@ namespace Sales.Infrastructure.Repositories
         
         }
 
+        public async Task<IEnumerable<CustomerOrderDetail>> GetCustomerOrderDetailsAsync(int customerId)
+        {
+            var query = from od in _context.SalesOrderDetails
+                        join o in _context.SalesOrders 
+                        on od.SalesOrderId equals o.SalesOrderId
+                        join p in _context.Product
+                        on od.ProductId equals p.ProductId
+                        where o.CustomerId == customerId
+                        select new CustomerOrderDetail
+                        {
+                            SalesOrderId = od.SalesOrderId,
+                            ProductId = p.ProductId,
+                            ProductName = p.Name,
+                            Quantity = od.OrderQty,
+                            LineTotal = od.LineTotal,
+                            OrderDate = o.orderDate
+                        };
+
+            return await query
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

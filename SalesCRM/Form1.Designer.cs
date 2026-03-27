@@ -30,17 +30,18 @@
         {
             dgvCustomers = new DataGridView();
             OrdersButton = new Button();
+            dgvOrderDetails = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvOrderDetails).BeginInit();
             SuspendLayout();
             // 
             // dgvCustomers
             // 
             dgvCustomers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCustomers.Location = new Point(209, 12);
+            dgvCustomers.Location = new Point(130, 12);
             dgvCustomers.Name = "dgvCustomers";
-            dgvCustomers.Size = new Size(650, 462);
+            dgvCustomers.Size = new Size(729, 220);
             dgvCustomers.TabIndex = 0;
-            dgvCustomers.Visible = false;
             // 
             // OrdersButton
             // 
@@ -53,16 +54,26 @@
             OrdersButton.UseVisualStyleBackColor = true;
             OrdersButton.Click += OrdersButton_Click;
             // 
+            // dgvOrderDetails
+            // 
+            dgvOrderDetails.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvOrderDetails.Location = new Point(130, 238);
+            dgvOrderDetails.Name = "dgvOrderDetails";
+            dgvOrderDetails.Size = new Size(729, 240);
+            dgvOrderDetails.TabIndex = 2;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(871, 490);
+            Controls.Add(dgvOrderDetails);
             Controls.Add(OrdersButton);
             Controls.Add(dgvCustomers);
             Name = "Form1";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvOrderDetails).EndInit();
             ResumeLayout(false);
         }
 
@@ -70,5 +81,6 @@
 
         private DataGridView dgvCustomers;
         private Button OrdersButton;
+        private DataGridView dgvOrderDetails;
     }
 }

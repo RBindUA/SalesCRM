@@ -13,6 +13,8 @@ namespace SalesCRM
         {
             InitializeComponent();
             _customerRepository = customerRepository;
+            dgvCustomers.SelectionChanged += dgvCustomers_SelectionChanged;
+
         }
 
         private async void OrdersButton_Click(object sender, EventArgs e)
@@ -42,6 +44,9 @@ namespace SalesCRM
                 if (dgvCustomers.Columns["EmailAddress"] != null)
                     dgvCustomers.Columns["EmailAddress"].HeaderText = "Email";
 
+                if (dgvCustomers.Columns["Orders"] != null)
+                    dgvCustomers.Columns["Orders"].Visible = false;
+
                 if (dgvCustomers.Columns["OrdersList"] != null)
                 {
                     dgvCustomers.Columns["OrdersList"].HeaderText = "Numbers of orders";
@@ -52,8 +57,26 @@ namespace SalesCRM
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки: {ex.Message}");
+                MessageBox.Show($"Load ERROR: {ex.Message}");
+            }
+        }
+            private async void dgvCustomers_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvCustomers.CurrentRow?.DataBoundItem is Customer selectedCustomer)
+            {
+                try
+                {
+                    var details = await _customerRepository.GetCustomerOrderDetailsAsync(selectedCustomer.CustomerId);
+
+                    dgvOrderDetails.DataSource = details.ToList();
+                    if (dgvOrderDetails.Columns["LineTotal"] != null)
+                        dgvOrderDetails.Columns["LineTotal"].DefaultCellStyle.Format = "C2";
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Detail Load Error: {ex.Message}");
+                }
             }
         }
     }
-}
+    }
