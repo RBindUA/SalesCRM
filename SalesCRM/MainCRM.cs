@@ -5,15 +5,16 @@ using Sales.Domain.Entities;
 
 namespace SalesCRM
 {
-    public partial class Form1 : Form
+    public partial class MainCRM : Form
     {
 
         private readonly ICustomerRepository _customerRepository;
-        public Form1(ICustomerRepository customerRepository)
+        public MainCRM(ICustomerRepository customerRepository)
         {
             InitializeComponent();
             _customerRepository = customerRepository;
             dgvCustomers.SelectionChanged += dgvCustomers_SelectionChanged;
+
 
         }
 
@@ -76,6 +77,7 @@ namespace SalesCRM
                 {
                     Console.WriteLine($"Detail Load Error: {ex.Message}");
                 }
+
             }
         }
     }

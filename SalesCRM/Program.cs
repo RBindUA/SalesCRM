@@ -18,7 +18,7 @@ namespace SalesCRM
             ConfigureServices(services);
             using (var serviceProvider = services.BuildServiceProvider())
             {
-                var mainForm = serviceProvider.GetRequiredService<Form1>();
+                var mainForm = serviceProvider.GetRequiredService<MainCRM>();
                 Application.Run(mainForm);
             }
         }
@@ -38,7 +38,7 @@ namespace SalesCRM
                 }));
 
             services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<Form1>();
+            services.AddTransient<MainCRM>();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SalesCRM
 {
-    partial class Form1
+    partial class MainCRM
     {
         /// <summary>
         ///  Required designer variable.
