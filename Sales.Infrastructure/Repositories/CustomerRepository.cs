@@ -17,6 +17,23 @@ namespace Sales.Infrastructure.Repositories
     {
         private readonly AdventureWorksContext _context;
 
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateOrderDetailsAsync(CustomerOrderDetail dto)
+        {
+            var entity = await _context.SalesOrderDetails
+                .FirstOrDefaultAsync(x => x.SalesOrderId == dto.SalesOrderId
+                                       && x.SalesOrderDetailId == dto.SalesOrderDetailId);
+
+            if (entity != null)
+            {
+                entity.OrderQty = dto.Quantity;
+            }
+        }
+
         public CustomerRepository(AdventureWorksContext context)
         {
             _context = context;
@@ -66,13 +83,16 @@ namespace Sales.Infrastructure.Repositories
         public async Task<IEnumerable<CustomerOrderDetail>> GetCustomerOrderDetailsAsync(int customerId)
         {
             var query = from od in _context.SalesOrderDetails
-                        join o in _context.SalesOrders 
+                        join o in _context.SalesOrders
                         on od.SalesOrderId equals o.SalesOrderId
                         join p in _context.Product
                         on od.ProductId equals p.ProductId
                         where o.CustomerId == customerId
                         select new CustomerOrderDetail
                         {
+                            // Map the unique row ID so we can find it later for updates
+                            SalesOrderDetailId = od.SalesOrderDetailId,
+
                             SalesOrderId = od.SalesOrderId,
                             ProductId = p.ProductId,
                             ProductName = p.Name,
@@ -80,10 +100,7 @@ namespace Sales.Infrastructure.Repositories
                             LineTotal = od.LineTotal,
                             OrderDate = o.orderDate
                         };
-
-            return await query
-                .AsNoTracking()
-                .ToListAsync();
+            return await query.ToListAsync();
         }
     }
 }

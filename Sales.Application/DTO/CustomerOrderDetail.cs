@@ -9,6 +9,7 @@ namespace Sales.Application.DTOs
 {
     public class CustomerOrderDetail: IDataErrorInfo
     {
+        public int SalesOrderDetailId { get; set; }
         public int SalesOrderId { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;

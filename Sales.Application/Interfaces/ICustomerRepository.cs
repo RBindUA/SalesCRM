@@ -17,5 +17,9 @@ namespace Sales.Application.Interfaces
         Task AddAsync(Customer customer);
 
         Task<IEnumerable<CustomerOrderDetail>> GetCustomerOrderDetailsAsync(int customerId);
+       
+        Task SaveChangesAsync();
+
+        Task UpdateOrderDetailsAsync(CustomerOrderDetail dto);
     }
 }

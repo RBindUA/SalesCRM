@@ -59,7 +59,7 @@ namespace Sales.Infrastructure.Data
             });
             modelBuilder.Entity<SalesOrderDetail>(entity =>
             {
-                entity.ToTable("SalesOrderDetail", "Sales");
+                entity.ToTable("SalesOrderDetail", "Sales", tb => tb.HasTrigger("uSalesOrderDetail"));
                 //looks like we need combined key of SalesId & OrderId
                 entity.HasKey(e => new { e.SalesOrderId, e.SalesOrderDetailId });
 

@@ -31,6 +31,7 @@
             dgvCustomers = new DataGridView();
             OrdersButton = new Button();
             dgvOrderDetails = new DataGridView();
+            btnSave = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrderDetails).BeginInit();
             SuspendLayout();
@@ -62,15 +63,26 @@
             dgvOrderDetails.Size = new Size(729, 240);
             dgvOrderDetails.TabIndex = 2;
             // 
-            // Form1
+            // btnSave
+            // 
+            btnSave.Location = new Point(12, 72);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(112, 41);
+            btnSave.TabIndex = 3;
+            btnSave.Text = "Save changes";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
+            // MainCRM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(871, 490);
+            Controls.Add(btnSave);
             Controls.Add(dgvOrderDetails);
             Controls.Add(OrdersButton);
             Controls.Add(dgvCustomers);
-            Name = "Form1";
+            Name = "MainCRM";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrderDetails).EndInit();
@@ -82,5 +94,6 @@
         private DataGridView dgvCustomers;
         private Button OrdersButton;
         private DataGridView dgvOrderDetails;
+        private Button btnSave;
     }
 }
