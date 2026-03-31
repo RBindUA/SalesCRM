@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sales.Application.DTOs
+namespace Sales.Application.DTO
 {
     public class CustomerOrderDetailDto: IDataErrorInfo
     {

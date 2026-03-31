@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Sales.Application.DTO;
-using Sales.Application.DTOs;
 using Sales.Application.Interfaces;
 using Sales.Domain.Entities;
 using Sales.Infrastructure.Data;

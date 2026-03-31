@@ -1,9 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Sales.Application.Interfaces;
-using Sales.Infrastructure.Data;
-using Sales.Infrastructure.Repositories;
-using Sales.Infrastructure.Services;
+using Sales.DependencyInjection;
 
 namespace SalesCRM
 {
@@ -28,41 +26,31 @@ namespace SalesCRM
         private static void ConfigureServices(IServiceCollection services)
         {
             var connectionString = "Server=localhost;Database=AdventureWorks2025;Trusted_Connection=True;TrustServerCertificate=True;";
-
-            services.AddDbContext<AdventureWorksContext>(options =>
-                options.UseSqlServer(connectionString, sqlOptions =>
-                {
-                    sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null
-                    );
-                }));
-            services.AddScoped<IDataBaseService, DataBaseService>();
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            
+            services.RegisterServices(connectionString);
             services.AddTransient<MainCRM>();
         }
         private static async Task EnsureDatabaseUpdated(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AdventureWorksContext>();
+            var dbService = scope.ServiceProvider.GetRequiredService<IDataBaseService>();
 
             try
             {
-                var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+                var pendingCount = await dbService.GetPendingMigrationsCountAsync();
 
-                if (pendingMigrations.Any())
+                if (pendingCount > 0)
                 {
-                    var message = $"Database updates detected ({pendingMigrations.Count()}).\n" +
+                    var message = $"Database updates detected ({pendingCount}).\n" +
                                   "Do you want to update now?\n\n" +
-                                  "Backup is recomended to avoid errors.";
+                                  "Backup is recommended to avoid errors.";
 
                     var result = MessageBox.Show(message, "DB updating",
                                                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (result == DialogResult.Yes)
                     {
-                        await context.Database.MigrateAsync();
+                        await dbService.MigrateAsync();
                         MessageBox.Show("Database is updated successfully", "Updated",
                                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }

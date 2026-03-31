@@ -1,7 +1,5 @@
 using Sales.Application.DTO;
-using Sales.Application.DTOs;
 using Sales.Application.Interfaces;
-using Sales.Domain.Entities;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 

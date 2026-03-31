@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30 d17.14
+VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesCRM", "SalesCRM\SalesCRM.csproj", "{7E60A5A4-A050-43EB-858F-DCEA238B5580}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,6 +15,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Application", "Sales.Application\Sales.Application.csproj", "{59B842C7-768F-41EA-A6AD-D3B595B9D21A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Infrastructure", "Sales.Infrastructure\Sales.Infrastructure.csproj", "{C10C3D1B-60B2-48E8-BCBA-9D532EBB3F44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.DependencyInjection", "Sales.DependencyInjection\Sales.DependencyInjection.csproj", "{FC49F5E6-7624-451A-A9CC-1ADC67E0483A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{C10C3D1B-60B2-48E8-BCBA-9D532EBB3F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C10C3D1B-60B2-48E8-BCBA-9D532EBB3F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C10C3D1B-60B2-48E8-BCBA-9D532EBB3F44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC49F5E6-7624-451A-A9CC-1ADC67E0483A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC49F5E6-7624-451A-A9CC-1ADC67E0483A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC49F5E6-7624-451A-A9CC-1ADC67E0483A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC49F5E6-7624-451A-A9CC-1ADC67E0483A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

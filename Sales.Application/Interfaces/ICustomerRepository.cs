@@ -1,5 +1,4 @@
 ﻿using Sales.Application.DTO;
-using Sales.Application.DTOs;
 using Sales.Domain.Entities;
 using System;
 using System.Collections.Generic;
