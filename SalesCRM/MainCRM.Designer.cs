@@ -32,6 +32,7 @@
             OrdersButton = new Button();
             dgvOrderDetails = new DataGridView();
             btnSave = new Button();
+            btnTestMigration = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrderDetails).BeginInit();
             SuspendLayout();
@@ -69,15 +70,26 @@
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(112, 41);
             btnSave.TabIndex = 3;
-            btnSave.Text = "Save changes";
+            btnSave.Text = "Change quantity";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
+            // 
+            // btnTestMigration
+            // 
+            btnTestMigration.Location = new Point(12, 442);
+            btnTestMigration.Name = "btnTestMigration";
+            btnTestMigration.Size = new Size(112, 36);
+            btnTestMigration.TabIndex = 4;
+            btnTestMigration.Text = "MigrationCheck";
+            btnTestMigration.UseVisualStyleBackColor = true;
+            btnTestMigration.Click += btnTestMigration_Click;
             // 
             // MainCRM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(871, 490);
+            Controls.Add(btnTestMigration);
             Controls.Add(btnSave);
             Controls.Add(dgvOrderDetails);
             Controls.Add(OrdersButton);
@@ -95,5 +107,6 @@
         private Button OrdersButton;
         private DataGridView dgvOrderDetails;
         private Button btnSave;
+        private Button btnTestMigration;
     }
 }

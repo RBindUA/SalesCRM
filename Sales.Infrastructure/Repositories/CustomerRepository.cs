@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Sales.Application.DTO;
 using Sales.Application.DTOs;
 using Sales.Application.Interfaces;
 using Sales.Domain.Entities;
@@ -22,7 +23,7 @@ namespace Sales.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateOrderDetailsAsync(CustomerOrderDetail dto)
+        public async Task UpdateOrderDetailsAsync(CustomerOrderDetailDto dto)
         {
             var entity = await _context.SalesOrderDetails
                 .FirstOrDefaultAsync(x => x.SalesOrderId == dto.SalesOrderId
@@ -39,48 +40,63 @@ namespace Sales.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
+        public async Task<IEnumerable<CustomerDto>> GetAllCustomersAsync()
         {
-            var query = from c in _context.Customers.Include(c => c.Orders)
-                        where c.PersonId != null
-
-                        join p in _context.Set<Person>()
-                        on c.PersonId equals p.BusinessEntityId
-
-                        join e in _context.Set<Email>()
-                        on p.BusinessEntityId equals e.BusinessEntityId into emailJoin
+            var query = from c in _context.Customers
+                        join p in _context.Set<Person>() on c.PersonId equals p.BusinessEntityId
+                        join e in _context.Set<Email>() on p.BusinessEntityId equals e.BusinessEntityId into emailJoin
                         from email in emailJoin.DefaultIfEmpty()
 
-                        select new Customer
+                        select new CustomerDto
                         {
                             CustomerId = c.CustomerId,
-                            PersonId = c.PersonId,
                             FirstName = p.FirstName,
                             LastName = p.LastName,
                             EmailAddress = email != null ? email.EmailAddress : "No Email",
-                            Orders = c.Orders
+
+                            OrderCount = c.Orders.Count(),
+
+                            OrderIds = c.Orders.Any()
+                                       ? string.Join(", ", c.Orders.Select(o => o.SalesOrderId))
+                                       : "No Orders"
                         };
 
             return await query
                 .AsNoTracking()
-                .Take(1000) // testing, to change
+                .Take(1000)
                 .ToListAsync();
         }
 
-        public async Task<Customer> GetByIdAsync(int id)
+        public async Task<CustomerDto?> GetByIdAsync(int id)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == id);
-        
+            return await _context.Customers
+                .AsNoTracking()
+         .Where(c => c.CustomerId == id)
+         .Select(c => new CustomerDto
+         {
+             CustomerId = c.CustomerId,
+             FirstName = c.FirstName,
+             LastName = c.LastName,
+             EmailAddress = c.EmailAddress,
+             OrderCount = c.Orders.Count()
+         })
+         .FirstOrDefaultAsync();
         }
 
-        public async Task AddAsync(Customer customer)
+
+        public async Task AddAsync(CreateCustomerDto dto)
         {
-            await _context.Customers.AddAsync(customer);
-            await _context.SaveChangesAsync();
-        
+            var newCustomer = new Customer
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                EmailAddress = dto.EmailAddress
+            };
+
+            await _context.Customers.AddAsync(newCustomer);
         }
 
-        public async Task<IEnumerable<CustomerOrderDetail>> GetCustomerOrderDetailsAsync(int customerId)
+        public async Task<IEnumerable<CustomerOrderDetailDto>> GetCustomerOrderDetailsAsync(int customerId)
         {
             var query = from od in _context.SalesOrderDetails
                         join o in _context.SalesOrders
@@ -88,9 +104,9 @@ namespace Sales.Infrastructure.Repositories
                         join p in _context.Product
                         on od.ProductId equals p.ProductId
                         where o.CustomerId == customerId
-                        select new CustomerOrderDetail
+                        select new CustomerOrderDetailDto
                         {
-                            // Map the unique row ID so we can find it later for updates
+                            // unique Id
                             SalesOrderDetailId = od.SalesOrderDetailId,
 
                             SalesOrderId = od.SalesOrderId,

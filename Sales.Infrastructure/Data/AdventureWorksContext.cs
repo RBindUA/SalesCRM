@@ -14,6 +14,17 @@ namespace Sales.Infrastructure.Data
             : base(options)
         {
         }
+        public AdventureWorksContext()
+        {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=localhost;Database=AdventureWorks2025;Trusted_Connection=True;TrustServerCertificate=True;");
+            }
+        }
         public DbSet<Person> Persons { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<Customer> Customers {get; set;}
@@ -60,7 +71,7 @@ namespace Sales.Infrastructure.Data
             modelBuilder.Entity<SalesOrderDetail>(entity =>
             {
                 entity.ToTable("SalesOrderDetail", "Sales", tb => tb.HasTrigger("uSalesOrderDetail"));
-                //looks like we need combined key of SalesId & OrderId
+                //combined key of SalesId & OrderId
                 entity.HasKey(e => new { e.SalesOrderId, e.SalesOrderDetailId });
 
                 entity.Property(e => e.SalesOrderId).HasColumnName("SalesOrderID");

@@ -1,3 +1,4 @@
+using Sales.Application.DTO;
 using Sales.Application.DTOs;
 using Sales.Application.Interfaces;
 using Sales.Domain.Entities;
@@ -10,10 +11,12 @@ namespace SalesCRM
     {
         private bool _isDirty = false;
         private readonly ICustomerRepository _customerRepository;
-        public MainCRM(ICustomerRepository customerRepository)
+        private readonly IDataBaseService _dbService;
+        public MainCRM(ICustomerRepository customerRepository, IDataBaseService dbService)
         {
             InitializeComponent();
             _customerRepository = customerRepository;
+            _dbService = dbService;
             dgvCustomers.SelectionChanged += dgvCustomers_SelectionChanged;
             dgvOrderDetails.DataError += dgvOrderDetails_DataError;
             dgvCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -23,6 +26,7 @@ namespace SalesCRM
 
 
         }
+
 
         private async void OrdersButton_Click(object sender, EventArgs e)
         {
@@ -38,6 +42,7 @@ namespace SalesCRM
                 var customerList = customers.ToList();
 
                 dgvCustomers.DataSource = customerList;
+                dgvCustomers.Columns["Error"].Visible = false;
 
                 if (dgvCustomers.Columns["CustomerId"] != null)
                 {
@@ -45,6 +50,9 @@ namespace SalesCRM
                     dgvCustomers.Columns["CustomerId"].ReadOnly = true;
                     dgvCustomers.Columns["CustomerId"].DefaultCellStyle.BackColor = Color.LightGray;
                 }
+                if (dgvCustomers.Columns["FullName"] != null)
+                    dgvCustomers.Columns["FullName"].HeaderText = "Full Name";
+
                 if (dgvCustomers.Columns["FirstName"] != null)
                     dgvCustomers.Columns["FirstName"].HeaderText = "Name";
 
@@ -53,18 +61,12 @@ namespace SalesCRM
 
                 if (dgvCustomers.Columns["EmailAddress"] != null)
                     dgvCustomers.Columns["EmailAddress"].HeaderText = "Email";
-                if (dgvCustomers.Columns["OrdersList"] != null)
-                {
-                    dgvCustomers.Columns["OrdersList"].HeaderText = "Numbers of orders";
-                }
 
-                if (dgvCustomers.Columns["PersonId"] != null)
-                    dgvCustomers.Columns["PersonId"].Visible = false;
+                if (dgvCustomers.Columns["OrderCount"] != null)
+                    dgvCustomers.Columns["OrderCount"].HeaderText = "Order number";
 
-                if (dgvCustomers.Columns["Orders"] != null)
-                    dgvCustomers.Columns["Orders"].Visible = false;
-
-
+                if (dgvCustomers.Columns["OrderIds"] != null)
+                    dgvCustomers.Columns["OrderIds"].HeaderText = "Order IDs";
 
                 this.Text = $"Clients loaded: {customerList.Count}";
             }
@@ -75,17 +77,15 @@ namespace SalesCRM
         }
         private async void dgvCustomers_SelectionChanged(object sender, EventArgs e)
         {
-            if (dgvCustomers.CurrentRow?.DataBoundItem is Customer selectedCustomer)
+            if (dgvCustomers.CurrentRow?.DataBoundItem is CustomerDto selectedCustomer)
             {
                 try
                 {
-                    // 1. Await the data properly here
                     var details = await _customerRepository.GetCustomerOrderDetailsAsync(selectedCustomer.CustomerId);
 
-                    // 2. Set the DataSource
                     dgvOrderDetails.DataSource = details.ToList();
 
-                    // 3. Call the formatting method
+                    //Call formatting helper
                     ConfigureOrderDetailsColumns();
                 }
                 catch (Exception ex)
@@ -103,11 +103,11 @@ namespace SalesCRM
 
         private async void btnSave_Click(object sender, EventArgs e)
         {
-            var details = dgvOrderDetails.DataSource as List<CustomerOrderDetail>;
+            var details = dgvOrderDetails.DataSource as List<CustomerOrderDetailDto>;
 
             if (details != null)
             {
-                // Valid check
+                // Validation check
                 bool hasErrors = details.Any(d =>
                     !string.IsNullOrEmpty(d[nameof(d.ProductName)]) ||
                     !string.IsNullOrEmpty(d[nameof(d.Quantity)]) ||
@@ -136,7 +136,7 @@ namespace SalesCRM
         private async void dgvOrderDetails_RowValidated(object sender, DataGridViewCellEventArgs e)
         {
             // Get the specific row that was just edited
-            if (dgvOrderDetails.Rows[e.RowIndex].DataBoundItem is CustomerOrderDetail editedItem)
+            if (dgvOrderDetails.Rows[e.RowIndex].DataBoundItem is CustomerOrderDetailDto editedItem)
             {
                 bool hasErrors = !string.IsNullOrEmpty(editedItem[nameof(editedItem.Quantity)]) ||
                          !string.IsNullOrEmpty(editedItem[nameof(editedItem.ProductName)]);
@@ -150,24 +150,23 @@ namespace SalesCRM
                 }
                 catch (Exception ex)
                 {
-                Console.WriteLine($"Auto-save failed: { ex.Message}");
+                    Console.WriteLine($"Auto-save failed: {ex.Message}");
                 }
             }
         }
 
         private void ConfigureOrderDetailsColumns()
         {
-            // If the grid has no columns yet, exit to avoid errors
             if (dgvOrderDetails.Columns.Count == 0) return;
 
-            // 1. Technical columns NOT visible
+            // Technical columns NOT visible
             if (dgvOrderDetails.Columns["SalesOrderDetailId"] != null)
                 dgvOrderDetails.Columns["SalesOrderDetailId"].Visible = false;
 
             if (dgvOrderDetails.Columns["Error"] != null)
                 dgvOrderDetails.Columns["Error"].Visible = false;
 
-            // 2. Visual Formatting
+            // Visual Formatting
             if (dgvOrderDetails.Columns["LineTotal"] != null)
                 dgvOrderDetails.Columns["LineTotal"].DefaultCellStyle.Format = "C2";
 
@@ -176,7 +175,7 @@ namespace SalesCRM
 
             dgvOrderDetails.ReadOnly = false;
 
-            // 3. Protect IDs
+            // Protect IDs
             if (dgvOrderDetails.Columns["SalesOrderId"] != null)
             {
                 dgvOrderDetails.Columns["SalesOrderId"].ReadOnly = true;
@@ -190,5 +189,39 @@ namespace SalesCRM
             }
         }
 
+        private async void btnTestMigration_Click(object sender, EventArgs e)
+        {
+            btnTestMigration.Enabled = false;
+
+            try
+            {
+            int countM = await _dbService.GetPendingMigrationsCountAsync();
+                if (countM == 0)
+                {
+                    MessageBox.Show("Database is up to date.", "Migration test",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    var res = MessageBox.Show($"Found {countM} pending updates. Apply them now?",
+                        "Migration Test", MessageBoxButtons.YesNo);
+                    if (res == DialogResult.Yes)
+                    {
+                        await _dbService.MigrateAsync();
+                        MessageBox.Show("Migration applied now.");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Migration test failed: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnTestMigration.Enabled = true;
+            }
+        }
     }
 }

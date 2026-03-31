@@ -1,4 +1,5 @@
-﻿using Sales.Application.DTOs;
+﻿using Sales.Application.DTO;
+using Sales.Application.DTOs;
 using Sales.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,16 +11,17 @@ namespace Sales.Application.Interfaces
 {
     public interface ICustomerRepository
     {
-        Task<Customer> GetByIdAsync(int id);
+        //Create
+        Task<CustomerDto?> GetByIdAsync(int id);
+        Task AddAsync(CreateCustomerDto customer);
+        Task<IEnumerable<CustomerOrderDetailDto>> GetCustomerOrderDetailsAsync(int customerId);
 
-        Task<IEnumerable<Customer>> GetAllCustomersAsync();
+        //Read
+        Task<IEnumerable<CustomerDto>> GetAllCustomersAsync();
 
-        Task AddAsync(Customer customer);
 
-        Task<IEnumerable<CustomerOrderDetail>> GetCustomerOrderDetailsAsync(int customerId);
-       
+        //Update
+        Task UpdateOrderDetailsAsync(CustomerOrderDetailDto dto);
         Task SaveChangesAsync();
-
-        Task UpdateOrderDetailsAsync(CustomerOrderDetail dto);
     }
 }

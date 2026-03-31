@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.DTOs
 {
-    public class CustomerOrderDetail: IDataErrorInfo
+    public class CustomerOrderDetailDto: IDataErrorInfo
     {
         public int SalesOrderDetailId { get; set; }
         public int SalesOrderId { get; set; }
