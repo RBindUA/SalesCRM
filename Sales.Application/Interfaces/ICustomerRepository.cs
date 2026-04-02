@@ -25,5 +25,6 @@ namespace Sales.Application.Interfaces
 
         //Delete
         Task DeleteOrderAsync(int OrderDetailId);
+        Task DeleteOrderById(int SalesOrderId);
     }
 }

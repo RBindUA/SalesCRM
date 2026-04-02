@@ -129,5 +129,21 @@ namespace Sales.Infrastructure.Repositories
             }
 
         }
+        public async Task DeleteOrderById(int SalesOrderId)
+        {
+            var details = _context.SalesOrderDetails
+        .Where(od => od.SalesOrderId == SalesOrderId);
+
+            _context.SalesOrderDetails.RemoveRange(details);
+
+            var order = await _context.SalesOrders
+                .FirstOrDefaultAsync(o => o.SalesOrderId == SalesOrderId);
+
+            if (order != null)
+            {
+                _context.SalesOrders.Remove(order);
+            }
+
+        }
     }
 }

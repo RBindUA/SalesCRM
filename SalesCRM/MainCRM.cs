@@ -224,42 +224,65 @@ namespace SalesCRM
 
         private async void btnDeleteOrder_Click(object sender, EventArgs e)
         {
-            if (dgvOrderDetails.CurrentRow?.DataBoundItem is CustomerOrderDetailDto selectedOrder)
+            if (dgvOrderDetails.CurrentCell == null)
             {
-                var confirm = MessageBox.Show(
-                    $"Are you sure you want to delete {selectedOrder.ProductName}?",
-                    "Confirm Delete",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                MessageBox.Show("Choose cell with name to delete item or ID to delete entire order!!");
+                return;
+            }
+            if (!(dgvOrderDetails.CurrentRow.DataBoundItem is CustomerOrderDetailDto selectedItem)) return;
+            string columnName = dgvOrderDetails.CurrentCell.OwningColumn.Name;
 
-                if (confirm == DialogResult.Yes)
+            try
+            {
+                if (columnName == "ProductName")
                 {
-                    try
+                    var confirm = MessageBox.Show(
+                        $"Are you sure you want to delete {selectedItem.ProductName} " +
+                        $"from{selectedItem.SalesOrderDetailId}?",
+                        "Confirm Delete",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (confirm == DialogResult.Yes)
                     {
-                        await _customerRepository.DeleteOrderAsync(selectedOrder.SalesOrderDetailId);
-
-
+                        await _customerRepository.DeleteOrderAsync(selectedItem.SalesOrderDetailId);
                         await _customerRepository.SaveChangesAsync();
-
                         if (dgvCustomers.CurrentRow?.DataBoundItem is CustomerDto selectedCustomer)
                         {
                             var details = await _customerRepository.GetCustomerOrderDetailsAsync(selectedCustomer.CustomerId);
                             dgvOrderDetails.DataSource = details.ToList();
                         }
-
                         MessageBox.Show("Order deleted successfully.");
                     }
-                    catch (Exception ex)
+                }
+                else if (columnName == "SalesOrderId")
+                {
+                    var confirm = MessageBox.Show($"Are you sure you want to delete" +
+                        $"ENTIRE {selectedItem.SalesOrderDetailId} order?",
+                        "Confirm Delete",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (confirm == DialogResult.Yes)
                     {
-                        MessageBox.Show($"Error deleting: {ex.Message}");
+                        await _customerRepository.DeleteOrderById(selectedItem.SalesOrderId);
+                        await _customerRepository.SaveChangesAsync();
+                        if (dgvCustomers.CurrentRow?.DataBoundItem is CustomerDto selectedCustomer)
+                        {
+                            var details = await _customerRepository.GetCustomerOrderDetailsAsync(selectedCustomer.CustomerId);
+                            dgvOrderDetails.DataSource = details.ToList();
+                        }
+                        MessageBox.Show("Entire order deleted successfuly.");
                     }
+
+                }
+                else
+                {
+                    MessageBox.Show("Please select an ID of order or product name to delete.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Please select an order to delete.");
+                MessageBox.Show($"Errror occured during deletion process: {ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
     }
 }
