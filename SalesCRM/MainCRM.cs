@@ -238,7 +238,7 @@ namespace SalesCRM
                 {
                     var confirm = MessageBox.Show(
                         $"Are you sure you want to delete {selectedItem.ProductName} " +
-                        $"from{selectedItem.SalesOrderDetailId}?",
+                        $" from{selectedItem.SalesOrderDetailId}?",
                         "Confirm Delete",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
@@ -256,8 +256,8 @@ namespace SalesCRM
                 }
                 else if (columnName == "SalesOrderId")
                 {
-                    var confirm = MessageBox.Show($"Are you sure you want to delete" +
-                        $"ENTIRE {selectedItem.SalesOrderDetailId} order?",
+                    var confirm = MessageBox.Show($"Are you sure you want to delete " +
+                        $" fully order {selectedItem.SalesOrderId} ?",
                         "Confirm Delete",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (confirm == DialogResult.Yes)
@@ -269,13 +269,15 @@ namespace SalesCRM
                             var details = await _customerRepository.GetCustomerOrderDetailsAsync(selectedCustomer.CustomerId);
                             dgvOrderDetails.DataSource = details.ToList();
                         }
+                        await LoadCustomerAsync();
+                        dgvOrderDetails.DataSource = null;
                         MessageBox.Show("Entire order deleted successfuly.");
                     }
 
                 }
                 else
                 {
-                    MessageBox.Show("Please select an ID of order or product name to delete.");
+                    MessageBox.Show("Please select the SalesOrderId of order or Product Name to delete.");
                 }
             }
             catch (Exception ex)
