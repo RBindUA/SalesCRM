@@ -22,5 +22,8 @@ namespace Sales.Application.Interfaces
         //Update
         Task UpdateOrderDetailsAsync(CustomerOrderDetailDto dto);
         Task SaveChangesAsync();
+
+        //Delete
+        Task DeleteOrderAsync(int OrderDetailId);
     }
 }

@@ -33,6 +33,7 @@
             dgvOrderDetails = new DataGridView();
             btnSave = new Button();
             btnTestMigration = new Button();
+            btnDeleteOrder = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrderDetails).BeginInit();
             SuspendLayout();
@@ -84,11 +85,22 @@
             btnTestMigration.UseVisualStyleBackColor = true;
             btnTestMigration.Click += btnTestMigration_Click;
             // 
+            // btnDeleteOrder
+            // 
+            btnDeleteOrder.Location = new Point(12, 133);
+            btnDeleteOrder.Name = "btnDeleteOrder";
+            btnDeleteOrder.Size = new Size(112, 39);
+            btnDeleteOrder.TabIndex = 5;
+            btnDeleteOrder.Text = "Delete order";
+            btnDeleteOrder.UseVisualStyleBackColor = true;
+            btnDeleteOrder.Click += btnDeleteOrder_Click;
+            // 
             // MainCRM
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(871, 490);
+            Controls.Add(btnDeleteOrder);
             Controls.Add(btnTestMigration);
             Controls.Add(btnSave);
             Controls.Add(dgvOrderDetails);
@@ -108,5 +120,6 @@
         private DataGridView dgvOrderDetails;
         private Button btnSave;
         private Button btnTestMigration;
+        private Button btnDeleteOrder;
     }
 }

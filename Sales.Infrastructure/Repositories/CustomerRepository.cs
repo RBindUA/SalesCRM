@@ -117,5 +117,17 @@ namespace Sales.Infrastructure.Repositories
                         };
             return await query.ToListAsync();
         }
+
+        public async Task DeleteOrderAsync(int OrderDetailId)
+        {
+            var entity = await _context.SalesOrderDetails.FirstOrDefaultAsync
+                (ed => ed.SalesOrderDetailId == OrderDetailId);
+
+            if (entity != null)
+            {
+                _context.SalesOrderDetails.Remove(entity);
+            }
+
+        }
     }
 }

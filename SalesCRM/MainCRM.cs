@@ -193,7 +193,7 @@ namespace SalesCRM
 
             try
             {
-            int countM = await _dbService.GetPendingMigrationsCountAsync();
+                int countM = await _dbService.GetPendingMigrationsCountAsync();
                 if (countM == 0)
                 {
                     MessageBox.Show("Database is up to date.", "Migration test",
@@ -221,5 +221,45 @@ namespace SalesCRM
                 btnTestMigration.Enabled = true;
             }
         }
+
+        private async void btnDeleteOrder_Click(object sender, EventArgs e)
+        {
+            if (dgvOrderDetails.CurrentRow?.DataBoundItem is CustomerOrderDetailDto selectedOrder)
+            {
+                var confirm = MessageBox.Show(
+                    $"Are you sure you want to delete {selectedOrder.ProductName}?",
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirm == DialogResult.Yes)
+                {
+                    try
+                    {
+                        await _customerRepository.DeleteOrderAsync(selectedOrder.SalesOrderDetailId);
+
+
+                        await _customerRepository.SaveChangesAsync();
+
+                        if (dgvCustomers.CurrentRow?.DataBoundItem is CustomerDto selectedCustomer)
+                        {
+                            var details = await _customerRepository.GetCustomerOrderDetailsAsync(selectedCustomer.CustomerId);
+                            dgvOrderDetails.DataSource = details.ToList();
+                        }
+
+                        MessageBox.Show("Order deleted successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error deleting: {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select an order to delete.");
+            }
+        }
+
     }
 }
